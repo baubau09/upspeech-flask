@@ -8,13 +8,17 @@ import soundfile as sf
 import base64
 from six.moves.urllib.request import urlopen
 
+def validate_audio():
+    return 0
 
+def format_audio():
+    return 0
 
-def transcribe_gcs():
+def transcribe_gcs(file_url):
     """Asynchronously transcribes the audio file specified by the gcs_uri."""
     client = speech.SpeechClient()
 
-    audio = speech.RecognitionAudio(uri="gs://upspeech-48370.appspot.com/test/untitled3.wav")
+    audio = speech.RecognitionAudio(uri=file_url)
     config = speech.RecognitionConfig(
         encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
         sample_rate_hertz=16000,
@@ -49,8 +53,8 @@ def transcribe_gcs():
 def count_words_from_transcribed(k):
     return len(k.split())
 
-def get_pace(words):
-    url = "https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2Funtitled3.wav?alt=media&token=3284d1a0-5db2-4d39-963d-bd216b3f48f6"
+def get_pace(words, file_url):
+    url = file_url
     data, samplerate = sf.read(io.BytesIO(urlopen(url).read()))
     # filename = librosa.ex('')
     # y, sr = librosa.load(filename)
@@ -59,9 +63,9 @@ def get_pace(words):
     wpm = words/s_to_m
     return wpm
 
-transcript = transcribe_gcs()
+transcript = transcribe_gcs("gs://upspeech-48370.appspot.com/test/untitled3.wav")
 words = count_words_from_transcribed(transcript)
-pace = get_pace(words)
+pace = get_pace(words, "https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2Funtitled3.wav?alt=media&token=3284d1a0-5db2-4d39-963d-bd216b3f48f6")
 print(transcript)
 print(words)
 print(pace)

@@ -29,12 +29,25 @@ def evaluation():
     try:
         uid = request.json['uid']
         username = request.json['username']
+        fileName = request.json['fileName']
         audioURL = request.json['audioURL']
         speechID = request.json['speechID']
         script = request.json['script']
 
         userRef = db.collection(u'users').document(u'uid')
         speechRef = userRef.collection(u'speeches').document(u'speechID')
-        return jsonify({"success": True}), 200
+
+        result = jsonify({
+            "uid": uid,
+            "username": username,
+            "fileName": fileName,
+            "audioURL": audioURL,
+            "speechID": speechID,
+            "script": script,
+            "userRef": userRef,
+            "speechRef": speechRef
+
+        })
+        return result, 200
     except Exception as e:
         return f"An Error Occured: {e}"
