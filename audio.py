@@ -7,23 +7,46 @@ from pydub.silence import split_on_silence
 import soundfile as sf
 import base64
 from six.moves.urllib.request import urlopen
-
-def validate_audio():
-    return 0
+from scipy.io import wavfile
+import scipy.signal as sps
 
 def format_audio():
+    """
+        Format the audio file for Google Speech API
+    """
     return 0
+
+def validate_audio():
+    """
+        Validate if the audio is in correct format for Google Speech API
+        16kHz sample rate
+        1 channel
+    """
+    return 0
+
+
 
 def transcribe_gcs(file_url):
     """Asynchronously transcribes the audio file specified by the gcs_uri."""
     client = speech.SpeechClient()
 
     audio = speech.RecognitionAudio(uri=file_url)
+
+    ### Config for Tri's voice
+    # config = speech.RecognitionConfig(
+    #     encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
+    #     sample_rate_hertz=16000,
+    #     language_code="en-UK",
+    #     enable_word_confidence=True
+    # )
+
+    ### Config for Anh's voice
     config = speech.RecognitionConfig(
         encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
-        sample_rate_hertz=16000,
-        language_code="en-UK",
-        enable_word_confidence=True
+        sample_rate_hertz=44100,
+        language_code="en-US",
+        enable_word_confidence=True,
+        audio_channel_count=2
     )
 
     operation = client.long_running_recognize(config=config, audio=audio)
@@ -32,8 +55,7 @@ def transcribe_gcs(file_url):
     response = operation.result(timeout=3000)
 
     k = ""
-
-
+    chunks = 0
 
     # Each result is for a consecutive portion of the audio. Iterate through
     # them to get the transcripts for the entire audio file.
@@ -43,14 +65,15 @@ def transcribe_gcs(file_url):
         # print("First alternative of result {}".format(i))
         # print(u"Transcript: {}".format(alternative.transcript))
         k = k + alternative.transcript
+        chunks = chunks + 1
         # print(
         #     u"First Word and Confidence: ({}, {})".format(
         #         alternative.words[0].word, alternative.words[0].confidence
         #     )
         # )
-    return k
+    return k, chunks
 
-def count_words_from_transcribed(k):
+def count_words(k):
     return len(k.split())
 
 def get_pace(words, file_url):
@@ -58,14 +81,16 @@ def get_pace(words, file_url):
     data, samplerate = sf.read(io.BytesIO(urlopen(url).read()))
     # filename = librosa.ex('')
     # y, sr = librosa.load(filename)
-    duration = librosa.get_duration(y=data, sr=samplerate)
+    #duration = librosa.get_duration(y=data, sr=samplerate)
+    duration = AudioSegment.from_file(io.BytesIO(urlopen(url).read())).duration_seconds
     s_to_m = (duration)*(1.0/60.0)
     wpm = words/s_to_m
     return wpm
 
-transcript = transcribe_gcs("gs://upspeech-48370.appspot.com/test/untitled3.wav")
-words = count_words_from_transcribed(transcript)
-pace = get_pace(words, "https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2Funtitled3.wav?alt=media&token=3284d1a0-5db2-4d39-963d-bd216b3f48f6")
+transcript, chunks = transcribe_gcs("gs://upspeech-48370.appspot.com/test/6 filler words.wav")
+words = count_words(transcript)
+pace = get_pace(words, "https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2F6%20filler%20words.wav?alt=media&token=d1406833-339a-405d-be8c-53acd99cba29")
 print(transcript)
 print(words)
 print(pace)
+print(chunks)
