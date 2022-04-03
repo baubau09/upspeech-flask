@@ -1,13 +1,4 @@
-import pickle
-import parselmouth
-from parselmouth.praat import call, run_file
-import glob
-import pandas as pd
-import numpy as np
-import scipy
-from scipy.stats import binom
-from scipy.stats import ks_2samp
-from scipy.stats import ttest_ind
+from parselmouth.praat import run_file
 import os
 
 def run_praat_file(m, p):
@@ -42,8 +33,7 @@ def mysppaus(m,p):
     z2 = run_praat_file(m, p)
     z3=int(z2[1]) 
     z4=float(z2[3]) 
-    #print ("number_of_pauses=",z3)
-    result = "".format(z3) + " "
-    return result
+    print ("number_of_pauses=",z3)
+    return z3
 
 mysppaus("voices/untitled5.wav","/Users/katietran/UpSpeech/upspeech-flask")
