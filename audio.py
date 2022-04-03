@@ -9,8 +9,6 @@ import base64
 from six.moves.urllib.request import urlopen
 from scipy.io import wavfile
 import scipy.signal as sps
-import myprosody as mysp
-import pickle
 
 def format_audio():
     """
@@ -18,38 +16,39 @@ def format_audio():
     """
     return 0
 
-def validate_audio():
+def validate_audio(url):
     """
         Validate if the audio is in correct format for Google Speech API
         16kHz sample rate
         1 channel
     """
-    return 0
+    data, samplerate = sf.read(io.BytesIO(urlopen(url).read()))
+    return samplerate
 
 
 
-def transcribe_gcs(file_url):
+def transcribe_gcs(file_url, samplerate):
     """Asynchronously transcribes the audio file specified by the gcs_uri."""
     client = speech.SpeechClient()
 
     audio = speech.RecognitionAudio(uri=file_url)
 
     ### Config for Tri's voice
-    # config = speech.RecognitionConfig(
-    #     encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
-    #     sample_rate_hertz=16000,
-    #     language_code="en-UK",
-    #     enable_word_confidence=True
-    # )
-
-    ### Config for Anh's voice
     config = speech.RecognitionConfig(
         encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
-        sample_rate_hertz=44100,
-        language_code="en-US",
-        enable_word_confidence=True,
-        audio_channel_count=2
+        sample_rate_hertz=samplerate,
+        language_code="en-UK",
+        enable_word_confidence=True
     )
+
+    ### Config for Anh's voice
+    # config = speech.RecognitionConfig(
+    #     encoding=speech.RecognitionConfig.AudioEncoding.,
+    #     sample_rate_hertz=44100,
+    #     language_code="en-US",
+    #     enable_word_confidence=True,
+    #     audio_channel_count=2
+    # )
 
     operation = client.long_running_recognize(config=config, audio=audio)
 
@@ -91,16 +90,12 @@ def get_pace(words, file_url):
     wpm = words/s_to_m
     return wpm
 
-# transcript, chunks = transcribe_gcs("gs://upspeech-48370.appspot.com/test/6 filler words.wav")
-# words = count_words(transcript)
-# # pace = get_pace(words, "https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2Funtitled4.wav?alt=media&token=3284d1a0-5db2-4d39-963d-bd216b3f48f6")
-# pace = get_pace(words, "https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2F6%20filler%20words.wav?alt=media&token=d1406833-339a-405d-be8c-53acd99cba29")
-# print(transcript)
-# print(words)
-# print(pace)
-# print(chunks)
-
-p = "untitled5"
-c = "/Users/katietran/UpSpeech/upspeech-flask/myprosody"
-
-mysp.mysppaus(p,c)
+sr = validate_audio("https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2Funtitled4.wav?alt=media&token=3284d1a0-5db2-4d39-963d-bd216b3f48f6")
+transcript, chunks = transcribe_gcs(file_url="gs://upspeech-48370.appspot.com/test/untitled4.wav", samplerate=sr)
+words = count_words(transcript)
+pace = get_pace(words, "https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2Funtitled4.wav?alt=media&token=3284d1a0-5db2-4d39-963d-bd216b3f48f6")
+print(transcript)
+print(words)
+print(pace)
+print(chunks)
+print(sr)
