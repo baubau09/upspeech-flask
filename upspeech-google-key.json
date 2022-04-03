@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "upspeech",
+  "private_key_id": "c8569d8afdb2e67c630233be1096b45e8f0ca4f0",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDHTBU6ToQKXbgD\nnR1vjZflgz9LjwaCN2efjv0cSV2J6+s5GGs0xZM5dksKuKPyrvqIyP9iMe5pP5eI\nEujGXcqtty0htsX9MHHsPEfcVvaT4Zw0O7/h+K/3mzzLjC5dKvwQ+iExsQX5P/Az\nnlpEA0X8P9A4reW+ISpKEUNBdLc9vconkRGwzNRaLsnTjYq3P64LcVKZwCBXX/Xj\nv2YBRu6jstE6MZvtC/1M3A3QcSLcWKs4XLZOlYwM+lnS6v4YOGgeYtJODkc5QlIv\nAintwhMlBE4HoYUad/vD26DBlOG9XBRltoLV19r/ZsUwg97SQf+oxNhE/oD+OMV2\n/P1SW5KZAgMBAAECggEAD3bKpuDBkIEl7oUNONys9QGyfzObEHuQFND/65pdu0sm\nnO8iHzdXByLNcjvr3/ObCQYSzhTyjndN7YcNSZpGSCU24UjQ8AzUQ72IFFBcunjL\ndnO0aqpLRrrK6thdUjYsCbBlTV/F1BZ7/H731HmUjDaMLfmziLjPrG004ZCKFcY2\nVMRmjcRDtZBa4A/clKM2qPIivdL1xLaqgn/PFhA1YBK+o/TWTuQEe78hAnKPAFdp\ntlWEHRXBAdLKKqGfDYSdVpThTb+HC6hzPnTmLp2MmVHEwuvrdtqaeV95INScTmN+\n1/p8tWQjRC0wBAVBKpCAJaThZvkcOXX2nYVPCEU16QKBgQDsN2vGlkCgFhnPgR/8\ne2vizEjywxtLSS5CcX6qVtvFg5+Hv45id8KzIQ4xt/81lRn4U5c6aIea9KCJHym5\nSfGZ9E3nrLkjoXkQOy2RXJ3CztPLn/CoJ77NqdbYAawQ3HQBI6ddhSlExnQ5A493\n8I9Palyx6hk2B+n71QMzALnBuwKBgQDX/Rjc4t5JzQeQj/MCs0oiJj+l79mhqZav\nqY2EA4ojp23oQ2Ngk+DAH+cSxK1g5i87Id2BPrQgcCM+rbl94G/H8TluMWkI2hT8\nvJZ7WkhMNIW0VHItfzcCSPXbj/Thj92aOL/VE2xdI4TkhAC572hoctTv2hg4FdUo\nOK8TJ6y9uwKBgD4o/2WM2IjICBbA5gfs+qD+HRw1F5OiOFgnwatVnBPH5U01rWRg\nG45D3pZa0v/osqLUbHFkXHr8cNpkpvgpaziWP4H9w+KKdW8+A2nDM4i2IKnu9sdp\nXh6E2RKSrhLp0GUUWtCTYB7HEoKGW1S2qx+835O6BNRhFMO+dE8Rm9BNAoGAY6KF\njZ+6GyFRlAZTe7NpR0eNpOZ35nNs56u3dGaNmtTphnNPrIWK8BXHaoj/0etdblG4\n9J4QScZw+8D4CHE4H2vPql1wrnyrocr9P/ntz/mKlB1Abmx427z8bUSDGmpbN4Fm\nPMyw+GYiL6gVDbC64TPXtq1M7tJjeiJr4NI0hXECgYA+6xT6kKR/hcJjpsBKlKZO\nuon0ZNvqB5DUcpD9ZFoMECU7wZD0k0vFWqB3Tl9bXEu+cd17j9bSZSiGjVXUPlRJ\nDhSb+f1/dP1WEoGbiVqiS+Hx8h0ZiwUvLiGfCXuTP9WdTJ/A/i6h0px+gqTgVLE0\n+F2LPpHjvUAtWUkySWgdNw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "upspeech-voice@upspeech.iam.gserviceaccount.com",
+  "client_id": "115415744038567967168",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/upspeech-voice%40upspeech.iam.gserviceaccount.com"
+}
