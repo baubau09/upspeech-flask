@@ -9,6 +9,8 @@ import base64
 from six.moves.urllib.request import urlopen
 from scipy.io import wavfile
 import scipy.signal as sps
+import myprosody as mysp
+import pickle
 
 def format_audio():
     """
@@ -66,6 +68,8 @@ def transcribe_gcs(file_url):
         # print(u"Transcript: {}".format(alternative.transcript))
         k = k + alternative.transcript
         chunks = chunks + 1
+        for item in alternative.words:
+            print(item.word, item.confidence)
         # print(
         #     u"First Word and Confidence: ({}, {})".format(
         #         alternative.words[0].word, alternative.words[0].confidence
@@ -87,10 +91,16 @@ def get_pace(words, file_url):
     wpm = words/s_to_m
     return wpm
 
-transcript, chunks = transcribe_gcs("gs://upspeech-48370.appspot.com/test/6 filler words.wav")
-words = count_words(transcript)
-pace = get_pace(words, "https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2F6%20filler%20words.wav?alt=media&token=d1406833-339a-405d-be8c-53acd99cba29")
-print(transcript)
-print(words)
-print(pace)
-print(chunks)
+# transcript, chunks = transcribe_gcs("gs://upspeech-48370.appspot.com/test/6 filler words.wav")
+# words = count_words(transcript)
+# # pace = get_pace(words, "https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2Funtitled4.wav?alt=media&token=3284d1a0-5db2-4d39-963d-bd216b3f48f6")
+# pace = get_pace(words, "https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2F6%20filler%20words.wav?alt=media&token=d1406833-339a-405d-be8c-53acd99cba29")
+# print(transcript)
+# print(words)
+# print(pace)
+# print(chunks)
+
+p = "untitled5"
+c = "/Users/katietran/UpSpeech/upspeech-flask/myprosody"
+
+mysp.mysppaus(p,c)

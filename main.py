@@ -18,12 +18,10 @@ def hello_world():
     return "<p>Hello, World!</p>"
 
 
-@app.route("/api/eval", methods=['POST', 'PUT'])
+@app.route("/api/eval", methods=['POST'])
 def evaluation():
     """
-        evaluation(): Update fields from a document with request body.
-        Ensure you pass a custom ID as part of json body in post request,
-        e.g. json={'id': '1', 'title': 'Write a blog post today'
+        Test API routes
         
     """
     try:
