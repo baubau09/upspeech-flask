@@ -38,9 +38,9 @@ def evaluation():
         result = jsonify({
             "uid": uid,
             "username": username,
+            "speechID": speechID,
             # "fileName": fileName,
             # "audioURL": audioURL,
-            "speechID": speechID,
             # "script": script,
             # "userRef": userRef,
             # "speechRef": speechRef
