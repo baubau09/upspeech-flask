@@ -34,22 +34,22 @@ def transcribe_gcs(file_url, samplerate):
     audio = speech.RecognitionAudio(uri=file_url)
 
     ### Config for Tri's voice
-    # config = speech.RecognitionConfig(
-    #     encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
-    #     sample_rate_hertz=samplerate,
-    #     language_code="en-UK",
-    #     enable_word_confidence=True,
-    #     audio_channel_count=1
-    # )
-
-    ### Config for Anh's voice
     config = speech.RecognitionConfig(
         encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
         sample_rate_hertz=samplerate,
-        language_code="en-US",
+        language_code="en-UK",
         enable_word_confidence=True,
-        audio_channel_count=2
+        audio_channel_count=1
     )
+
+    ### Config for Anh's voice
+    # config = speech.RecognitionConfig(
+    #     encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
+    #     sample_rate_hertz=samplerate,
+    #     language_code="en-US",
+    #     enable_word_confidence=True,
+    #     audio_channel_count=2
+    # )
 
     operation = client.long_running_recognize(config=config, audio=audio)
 
@@ -95,18 +95,18 @@ def get_pace(words, file_url):
     duration = AudioSegment.from_file(io.BytesIO(urlopen(url).read())).duration_seconds
     s_to_m = (duration)*(1.0/60.0)
     wpm = words/s_to_m
-    return wpm
+    return int(wpm)
 
-# sr = validate_audio("https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2Funtitled4.wav?alt=media&token=3284d1a0-5db2-4d39-963d-bd216b3f48f6")
-sr = validate_audio("https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2F7%20filler%20words.wav?alt=media&token=e1cbc2fd-1d76-469b-835b-47357e77252d")
-transcript, chunks = transcribe_gcs(file_url="gs://upspeech-48370.appspot.com/test/7 filler words.wav", samplerate=sr)
+sr = validate_audio("https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2Funtitled4.wav?alt=media&token=3284d1a0-5db2-4d39-963d-bd216b3f48f6")
+# sr = validate_audio("https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2F7%20filler%20words.wav?alt=media&token=e1cbc2fd-1d76-469b-835b-47357e77252d")
+transcript, chunks = transcribe_gcs(file_url="gs://upspeech-48370.appspot.com/test/untitled4.wav", samplerate=sr)
 words = count_words(transcript)
-# pace = get_pace(words, "https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2Funtitled4.wav?alt=media&token=3284d1a0-5db2-4d39-963d-bd216b3f48f6")
-pace = get_pace(words, "https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2F7%20filler%20words.wav?alt=media&token=e1cbc2fd-1d76-469b-835b-47357e77252d")
+pace = get_pace(words, "https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2Funtitled4.wav?alt=media&token=3284d1a0-5db2-4d39-963d-bd216b3f48f6")
+# pace = get_pace(words, "https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2F7%20filler%20words.wav?alt=media&token=e1cbc2fd-1d76-469b-835b-47357e77252d")
 
 
-print(transcript)
-print(words)
-print(pace)
-print(chunks)
-print(sr)
+print("Transcript: " + transcript)
+print("Number of words: " + str(words))
+print("Pace: " + str(pace))
+# print(chunks)
+# print(sr)
