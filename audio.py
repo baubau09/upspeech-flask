@@ -63,9 +63,9 @@ def transcribe_gcs(file_url, samplerate):
     # them to get the transcripts for the entire audio file.
     for i, result in enumerate(response.results):
         alternative = result.alternatives[0]
-        # print("-" * 20)
-        # print("First alternative of result {}".format(i))
-        # print(u"Transcript: {}".format(alternative.transcript))
+        print("-" * 20)
+        print("First alternative of result {}".format(i))
+        print(u"Transcript: {}".format(alternative.transcript))
         """Print a whole transcript sentence"""
         k = k + alternative.transcript
         
@@ -73,15 +73,57 @@ def transcribe_gcs(file_url, samplerate):
         chunks = chunks + 1
 
         """Print all words and its confidence level from the alternative.words array"""
-        # for item in alternative.words:
-        #     print(item.word, item.confidence)
+        for item in alternative.words:
+            print(item.word, item.confidence)
 
-        # print(
-        #     u"First Word and Confidence: ({}, {})".format(
-        #         alternative.words[0].word, alternative.words[0].confidence
-        #     )
-        # )
+
+
+        print(
+            u"First Word and Confidence: ({}, {})".format(
+                alternative.words[0].word, alternative.words[0].confidence
+            )
+        )
+
+
     return k, chunks
+
+def analyze(file_url, samplerate):
+    client = speech.SpeechClient()
+
+    audio = speech.RecognitionAudio(uri=file_url)
+
+    ### Config for Tri's voice
+    config = speech.RecognitionConfig(
+        encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
+        sample_rate_hertz=samplerate,
+        language_code="en-UK",
+        enable_word_confidence=True,
+        audio_channel_count=1
+    )
+
+
+
+    operation = client.long_running_recognize(config=config, audio=audio)
+
+    print("Waiting for operation to complete...")
+    response = operation.result(timeout=3000)
+
+
+
+    for i, result in enumerate(response.results):
+        first_alternative = result.alternatives[0]
+        confidence_level = first_alternative.confidence
+        word = first_alternative.transcript 
+        if confidence_level > 0.9:
+            print("You can pronounce this word like a foreign speaker!",end="")
+        elif confidence_level > 0.8:
+            print("So close! Practice a little bit more!",end="")
+        elif confidence_level > 0.7:
+            print("Need a lot of improvements here!",end="")
+        else:
+            print("Looking up for this word in the dictionary maybe?",end="")
+        print(word)
+
 
 def count_words(k):
     return len(k.split())
