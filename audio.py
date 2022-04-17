@@ -1,12 +1,9 @@
 import io
 import os
-import librosa
 from google.cloud import speech_v1p1beta1 as speech
 from pydub import AudioSegment
-from pydub.silence import split_on_silence
 import soundfile as sf
 from soundfile import SoundFile
-import base64
 from six.moves.urllib.request import urlopen
 
 # TODO: 
