@@ -26,7 +26,8 @@ def validate_audio(url, filename):
     # else:
     #     sf.write(file=filename+'.wav', samplerate=44100, subtype='PCM_16', )
     if ((sound.frame_rate < 44100) or sound.sample_width == 1):
-        return 'Current audio is < 44100Hz or < 16-bit depth, please input a better audio file'
+        print('Current audio is < 44100Hz or < 16-bit depth, please input a better audio file')
+        return False
     if ((sound.frame_rate == 44100) and sound.sample_width == 2 and sound.channels == 1 ):
         return True
     else:
@@ -35,7 +36,7 @@ def validate_audio(url, filename):
         sound2 = sound2.set_channels(1)
         file_handle = sound2.export(filename, format="wav")
     # data, samplerate  = sf.read(io.BytesIO(urlopen(url).read()))
-    return False
+    return filename
 
 # print(validate_audio("https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2Funtitled5.wav?alt=media&token=3284d1a0-5db2-4d39-963d-bd216b3f48f6", "test_untitled5.wav"))
 

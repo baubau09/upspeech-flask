@@ -1,5 +1,6 @@
 from parselmouth.praat import run_file
 import os
+import sys, contextlib, io
 
 def run_praat_file(m, p):
     """
@@ -35,7 +36,7 @@ def get_fillers(m,p):
     z2 = run_praat_file(m, p)
     z3=int(z2[1]) 
     z4=float(z2[3]) 
-    print ("number_of_fillers=",z3)
+    #print ("fillers=", z3)
     return z3
 
-get_fillers("test_untitled5.wav","/Users/katietran/UpSpeech/upspeech-flask")
+print(get_fillers("untitled5.wav","/Users/katietran/UpSpeech/upspeech-flask"))
