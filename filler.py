@@ -34,9 +34,16 @@ def get_fillers(filename, url):
     """
     Detect and count number of fillers and pauses
     """
-    # Save file to disk
-    fileName = "filler_" + filename
-    urllib.request.urlretrieve(url, fileName)
+    
+    file = ''
+    # Check if a processed file is already on disk
+    if (os.path.isfile(filename)):
+        file = filename
+    else:
+        # If not, download from Firebase and Save file to disk
+        file = "filler_" + filename
+        urllib.request.urlretrieve(url, file)
+
     p = "/Users/katietran/UpSpeech/upspeech-flask"
     z2 = run_praat_file(filename, p)
     z3=int(z2[1])
