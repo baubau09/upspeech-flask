@@ -9,6 +9,7 @@ import base64
 from six.moves.urllib.request import urlopen
 from scipy.io import wavfile
 import scipy.signal as sps
+import difflib
 
 def format_audio():
     """
@@ -138,6 +139,25 @@ def get_pace(words, file_url):
     s_to_m = (duration)*(1.0/60.0)
     wpm = words/s_to_m
     return int(wpm)
+
+#ideal_transcript = input("Enter your script: ")
+ideal_transcript = "Hello my name is abc"
+
+#Detect the difference between two scripts (The ideal transcrip and the detected transcript)
+def check_pronunciation(ideal_transcript, transcribe_gcs):
+    #Split sentences into words for checking
+    idl = ideal_transcript.split()
+    trs = transcribe_gcs.split()
+    
+    #Convert list into set for processing data
+    set1 = set(idl)
+    set2 = set(trs)
+    set3 = set2.difference(set1) #Find the difference between the detected audio and the original file
+    diff = list(set3)
+
+    return diff
+
+
 
 sr = validate_audio("https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2Funtitled4.wav?alt=media&token=3284d1a0-5db2-4d39-963d-bd216b3f48f6")
 # sr = validate_audio("https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2F7%20filler%20words.wav?alt=media&token=e1cbc2fd-1d76-469b-835b-47357e77252d")
