@@ -5,10 +5,7 @@ from pydub import AudioSegment
 import soundfile as sf
 from soundfile import SoundFile
 from six.moves.urllib.request import urlopen
-
-# TODO: 
-# If validate_audio return True, then use the Cloud Storage URL and URI for analysis algorithms
-# If return False, then use the newly created file for analysis algorithms
+from filler import *
 
 def validate_audio(url, filename):
     """
@@ -18,7 +15,7 @@ def validate_audio(url, filename):
         16-bit depth
     """
     #audio = sf.SoundFile(io.BytesIO(urlopen(url).read()))
-    sound = AudioSegment.from_wav(io.BytesIO(urlopen(url).read()))
+    sound = AudioSegment.from_file(io.BytesIO(urlopen(url).read()))
     # if ((audio.samplerate < 44100) or audio.subtype == 'PCM_S8'):
     #     return 'Current audio is < 44100Hz or < 16-bit depth, please input a better audio file'
     # if ((audio.samplerate == 44100) and audio.subtype == 'PCM_16' and audio.channels == 1 ):
@@ -40,30 +37,36 @@ def validate_audio(url, filename):
 
 # print(validate_audio("https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2Funtitled5.wav?alt=media&token=3284d1a0-5db2-4d39-963d-bd216b3f48f6", "test_untitled5.wav"))
 
-
-def transcribe_gcs(file_url, samplerate):
+def transcribe_gcs(file_url, filename, uid):
     """Asynchronously transcribes the audio file specified by the gcs_uri."""
     client = speech.SpeechClient()
 
-    audio = speech.RecognitionAudio(uri=file_url)
+    if file_url == "":
+        speech_file = filename
+        with open(speech_file, "rb") as audio_file:
+            content = audio_file.read()
+        audio = speech.RecognitionAudio(content=content)
+    else:
+        url = "gs://upspeech-48370.appspot.com/uploads/" + uid + "/" + filename
+        audio = speech.RecognitionAudio(uri=url)
 
     ### Config for Tri's voice
+    # config = speech.RecognitionConfig(
+    #     encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
+    #     sample_rate_hertz=16000,
+    #     language_code="en-UK",
+    #     enable_word_confidence=True,
+    #     audio_channel_count=1
+    # )
+
+    ### Config for Anh's voice
     config = speech.RecognitionConfig(
         encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
-        sample_rate_hertz=samplerate,
-        language_code="en-UK",
+        sample_rate_hertz=44100,
+        language_code="en-US",
         enable_word_confidence=True,
         audio_channel_count=1
     )
-
-    ### Config for Anh's voice
-    # config = speech.RecognitionConfig(
-    #     encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
-    #     sample_rate_hertz=samplerate,
-    #     language_code="en-US",
-    #     enable_word_confidence=True,
-    #     audio_channel_count=2
-    # )
 
     operation = client.long_running_recognize(config=config, audio=audio)
 
@@ -95,13 +98,14 @@ def transcribe_gcs(file_url, samplerate):
         #         alternative.words[0].word, alternative.words[0].confidence
         #     )
         # )
-    return k, chunks
+    return k
 
 def count_words(k):
     return len(k.split())
 
-def get_pace(words, file_url):
+def get_pace(transcript, file_url):
     url = file_url
+    words = len(transcript.split())
     # data, samplerate = sf.read(io.BytesIO(urlopen(url).read()))
     # filename = librosa.ex('')
     # y, sr = librosa.load(filename)
@@ -111,6 +115,21 @@ def get_pace(words, file_url):
     wpm = words/s_to_m
     return int(wpm)
 
+audioURL="https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/uploads%2FkmbSETfciMXU7ZKGkpXXE4fvnwK2%2FkmbSETfciMXU7ZKGkpXXE4fvnwK2_1650676225600.wav?alt=media&token=85b9b27e-bdce-415a-98f5-6fbb06abb598"
+uid = "kmbSETfciMXU7ZKGkpXXE4fvnwK2"
+fileName = "kmbSETfciMXU7ZKGkpXXE4fvnwK2_1650676225600.wav"
+val_audio = validate_audio(audioURL, filename=fileName)
+
+if val_audio == False:
+    print ('Error')
+if val_audio == True:
+    transcript = transcribe_gcs(file_url=audioURL, filename=fileName, uid="kmbSETfciMXU7ZKGkpXXE4fvnwK2")
+if val_audio == fileName:
+    transcript = transcribe_gcs(file_url="", filename=fileName, uid=uid)
+pace = get_pace(transcript=transcript, file_url=audioURL)
+fillers = get_fillers(filename=fileName, url=audioURL)
+# transcript = transcribe_gcs(file_url="kmbSETfciMXU7ZKGkpXXE4fvnwK2_1650675485622", filename="kmbSETfciMXU7ZKGkpXXE4fvnwK2_1650675485622.wav", uid="kmbSETfciMXU7ZKGkpXXE4fvnwK2")
+# pace = get_pace(transcript, file_url="https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/uploads%2FkmbSETfciMXU7ZKGkpXXE4fvnwK2%2FkmbSETfciMXU7ZKGkpXXE4fvnwK2_1650675485622.wav?alt=media&token=656ce1a5-c373-4a34-92ce-9c2ce2ee444b")
 # sr = validate_audio("https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2Funtitled4.wav?alt=media&token=3284d1a0-5db2-4d39-963d-bd216b3f48f6")
 # sr = validate_audio("https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2F7%20filler%20words.wav?alt=media&token=e1cbc2fd-1d76-469b-835b-47357e77252d")
 # transcript, chunks = transcribe_gcs(file_url="gs://upspeech-48370.appspot.com/test/untitled4.wav", samplerate=sr)
@@ -119,8 +138,9 @@ def get_pace(words, file_url):
 # pace = get_pace(words, "https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2F7%20filler%20words.wav?alt=media&token=e1cbc2fd-1d76-469b-835b-47357e77252d")
 
 
-# print("Transcript: " + transcript)
+print("Transcript: " + transcript)
 # print("Number of words: " + str(words))
-# print("Pace: " + str(pace))
+print("Pace: " + str(pace))
+print("Filled pauses: "+ str(fillers))
 # print(chunks)
 # print(sr)

@@ -1,7 +1,9 @@
 from parselmouth.praat import run_file
+import parselmouth
 import os
 import sys, contextlib, io
-
+from six.moves.urllib.request import urlopen
+import urllib.request
 def run_praat_file(m, p):
     """
     p : path to dataset folder
@@ -15,7 +17,6 @@ def run_praat_file(m, p):
     assert os.path.isfile(sound), "Wrong path to audio file"
     assert os.path.isfile(sourcerun), "Wrong path to praat script"
     assert os.path.isdir(path), "Wrong path to audio files"
-
     try:
         objects= run_file(sourcerun, -20, 2, 0.3, "yes",sound,path, 80, 400, 0.01, capture_output=True)
         #print (objects[0]) # This will print the info from the sound object, and objects[0] is a parselmouth.Sound object
@@ -29,14 +30,16 @@ def run_praat_file(m, p):
         print ("Try again the sound of the audio was not clear")
         pass
 
-def get_fillers(m,p):
+def get_fillers(filename, url):
     """
     Detect and count number of fillers and pauses
     """
-    z2 = run_praat_file(m, p)
-    z3=int(z2[1]) 
+    # Save file to disk
+    fileName = "filler_" + filename
+    urllib.request.urlretrieve(url, fileName)
+    p = "/Users/katietran/UpSpeech/upspeech-flask"
+    z2 = run_praat_file(filename, p)
+    z3=int(z2[1])
     z4=float(z2[3]) 
     #print ("fillers=", z3)
     return z3
-
-print(get_fillers("untitled5.wav","/Users/katietran/UpSpeech/upspeech-flask"))

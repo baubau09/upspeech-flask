@@ -5,6 +5,8 @@ import datetime
 import threading
 from time import sleep
 from flask_cors import CORS, cross_origin
+from audio import *
+from filler import *
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -42,10 +44,12 @@ def getBlob():
 @app.route("/api/eval", methods=['POST'])
 def evaluation():
     """
-        Test API routes
+        Main Evaluation API route
         
     """
     try:
+
+        # Request params
         uid = request.json['uid']
         username = request.json['username']
         fileName = request.json['fileName']
@@ -53,9 +57,35 @@ def evaluation():
         speechID = request.json['speechID']
         script = request.json['script']
 
+        # Firestore Document reference params
         userRef = db.collection(u'users').document(uid)
         speechRef = userRef.collection(u'speeches').document(speechID)
 
+        # Result values initialize
+        fillers = 0
+        fillersDesc = ''
+        pace = 0
+        paceDesc = ''
+        transcript = ''
+
+        # Audio validation value
+        val_audio = validate_audio(audioURL, filename=fileName)
+
+        if val_audio == False:
+            error_result = jsonify({"message":'Current audio is < 44100Hz or < 16-bit depth, please input a better audio file'})
+            return error_result, 500
+        if val_audio == True:
+            transcript = transcribe_gcs(file_url=audioURL, filename=fileName, uid=uid)
+        if val_audio == fileName:
+            transcript = transcribe_gcs(file_url="", filename=fileName, uid=uid)
+
+        pace = get_pace(transcript, audioURL)
+        fillers = get_fillers(fileName, audioURL)
+        # Remove file after fillers processing
+        os.remove("filler_" + fileName)
+        os.remove(fileName)
+
+        
         result = jsonify({
             "uid": uid,
             "username": username,
@@ -64,13 +94,21 @@ def evaluation():
             "audioURL": audioURL,
             "script": script,
             "userRef": userRef,
-            "speechRef": speechRef
+            "speechRef": speechRef,
+            "pace": pace,
+            "paceDesc": paceDesc,
+            "fillers": fillers,
+            "fillersDesc": fillersDesc
 
         })
-
+        # Update firebase parameters
         speechRef.update({u'fillers': 33, u'fillersDesc': 'Needs Improvement'})
+
+        # print results to console
         my_result = speechRef.get()
         print(my_result.to_dict())
+
+        # return
         return result, 200
     except Exception as e:
         return f"An Error Occured: {e}"
