@@ -52,16 +52,7 @@ def transcribe_gcs(file_url, filename, uid):
         url = "gs://upspeech-48370.appspot.com/uploads/" + uid + "/" + filename
         audio = speech.RecognitionAudio(uri=url)
 
-    ### Config for Tri's voice
-    # config = speech.RecognitionConfig(
-    #     encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
-    #     sample_rate_hertz=16000,
-    #     language_code="en-UK",
-    #     enable_word_confidence=True,
-    #     audio_channel_count=1
-    # )
-
-    ### Config for Anh's voice
+    ### Config 
     config = speech.RecognitionConfig(
         encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
         sample_rate_hertz=44100,
@@ -163,3 +154,22 @@ def get_fillers(filename, url):
     z4=float(z2[3]) 
     #print ("fillers=", z3)
     return z3
+
+def get_pace_desc(pace):
+    if (pace >= 100 and pace <= 160):
+        return 'Just Right'
+    if (pace < 100):
+        return 'Too Slow'
+    if (pace > 160):
+        return 'Too Fast'
+
+def get_fillers_pct(fillers, words):
+    return round(((fillers/words) * 100),1)
+
+def get_fillers_desc(pct):
+    if (pct >= 30.0):
+        return 'Needs Improvement'
+    if (pct <= 3.0):
+        return 'Perfect'
+    if (pct > 3.0 and pct <= 10.0):
+        return 'Good'
