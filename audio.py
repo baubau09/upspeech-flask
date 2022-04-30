@@ -2,8 +2,8 @@ import io
 import os
 from google.cloud import speech_v1p1beta1 as speech
 from pydub import AudioSegment
-import soundfile as sf
-from soundfile import SoundFile
+# import soundfile as sf
+# from soundfile import SoundFile
 from six.moves.urllib.request import urlopen
 import urllib.request
 from parselmouth.praat import run_file

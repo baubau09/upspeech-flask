@@ -4,3 +4,4 @@ firebase-admin>=5.2.0
 google-cloud-speech>=2.13.1
 praat-parselmouth>=0.4.1
 pydub>=0.25.1
+google-auth>=1.30.0
