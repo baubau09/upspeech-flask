@@ -77,9 +77,9 @@ def evaluation():
             error_result = jsonify({"message":'Current audio is < 44100Hz or < 16-bit depth, please input a better audio file'})
             return error_result, 500
         if val_audio == True:
-            transcript = transcribe_gcs(file_url=audioURL, filename=fileName, uid=uid)
+            transcript, alternative = transcribe_gcs(file_url=audioURL, filename=fileName, uid=uid)
         if val_audio == fileName:
-            transcript = transcribe_gcs(file_url="", filename=fileName, uid=uid)
+            transcript, alternative = transcribe_gcs(file_url="", filename=fileName, uid=uid)
         
 
         wordCount = count_words(transcript)
@@ -88,11 +88,17 @@ def evaluation():
         fillers = get_fillers(fileName, audioURL)
         fillersPct = get_fillers_pct(fillers,wordCount)
         fillersDesc = get_fillers_desc(fillersPct)
+        pronunWords = get_pronun_words(script, transcript,alternative)
+        pronunCount = len(pronunWords)
+        pronunPct = get_pronun_pct(wordCount, pronunCount)
+        pronunDesc = get_pronun_desc(pronunPct)
 
         # Remove file after processing
         if os.path.isfile("filler_" + fileName):
             os.remove("filler_" + fileName)
+        textgrid_name = "voices/" + fileName[:-4] + ".TextGrid"
         os.remove(fileName)
+        os.remove(textgrid_name)
 
         
         result = jsonify({
@@ -107,11 +113,15 @@ def evaluation():
             "fillers": fillers,
             "fillersDesc": fillersDesc,
             "fillersPct": fillersPct,
-            "wordCount": wordCount
+            "wordCount": wordCount,
+            "pronunErr": pronunCount,
+            "pronunErrPct": pronunPct,
+            "pronunErrDesc": pronunDesc,
+            "pronunWords": pronunWords
         })
 
         # Update firebase parameters
-        speechRef.update({u'fillers': fillers ,u'fillersDesc': fillersDesc, u'fillersPct': fillersPct, u'pace': pace, u'paceDesc': paceDesc, u'wordCount': wordCount})
+        speechRef.update({u'fillers': fillers ,u'fillersDesc': fillersDesc, u'fillersPct': fillersPct, u'pace': pace, u'paceDesc': paceDesc, u'wordCount': wordCount, u"pronunErr": pronunCount,u"pronunErrPct": pronunPct,u"pronunErrDesc": pronunDesc})
 
         # print results to console
         my_result = speechRef.get()

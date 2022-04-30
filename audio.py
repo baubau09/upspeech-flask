@@ -8,6 +8,9 @@ from six.moves.urllib.request import urlopen
 import urllib.request
 from parselmouth.praat import run_file
 import parselmouth
+from google.oauth2 import service_account
+
+gg_cred = service_account.Credentials.from_service_account_file("upspeech-firebase-key.json")
 
 def validate_audio(url, filename):
     """
@@ -41,7 +44,7 @@ def validate_audio(url, filename):
 
 def transcribe_gcs(file_url, filename, uid):
     """Asynchronously transcribes the audio file specified by the gcs_uri."""
-    client = speech.SpeechClient()
+    client = speech.SpeechClient(credentials=gg_cred)
 
     if file_url == "":
         speech_file = filename
@@ -91,7 +94,7 @@ def transcribe_gcs(file_url, filename, uid):
         #         alternative.words[0].word, alternative.words[0].confidence
         #     )
         # )
-    return k
+    return k, alternative
 
 def count_words(k):
     return len(k.split())
@@ -99,10 +102,6 @@ def count_words(k):
 def get_pace(transcript, file_url):
     url = file_url
     words = len(transcript.split())
-    # data, samplerate = sf.read(io.BytesIO(urlopen(url).read()))
-    # filename = librosa.ex('')
-    # y, sr = librosa.load(filename)
-    #duration = librosa.get_duration(y=data, sr=samplerate)
     duration = AudioSegment.from_file(io.BytesIO(urlopen(url).read())).duration_seconds
     s_to_m = (duration)*(1.0/60.0)
     wpm = words/s_to_m
@@ -167,9 +166,52 @@ def get_fillers_pct(fillers, words):
     return round(((fillers/words) * 100),1)
 
 def get_fillers_desc(pct):
+    if (pct >= 25.0):
+        return 'Needs Improvement'
+    if (pct <= 3.0):
+        return 'Perfect'
+    if (pct > 3.0 and pct < 25.0):
+        return 'Good'
+
+def get_word_level_conf(alternative):
+    words = alternative.words
+    for item in alternative.words:
+        print(item.word, item.confidence)
+
+def get_pronun_words(ideal_transcript, transcript, alt):
+    ideal_array = ideal_transcript.split()
+    transcript_array = transcript.split()
+    my_dict = {}
+    for index, item in enumerate(alt.words):
+        if (item.confidence <= 0.81):
+            my_dict[index] = {
+                "index": index,
+                "word": item.word,
+                "conf": item.confidence
+            }
+
+    my_dict_keys = list(my_dict.keys())
+    wrong_idx = []
+    wrong_words = []
+    for item in my_dict_keys:
+        wrong_idx.append(item)
+
+    if len(wrong_idx) == 0:
+        return wrong_words
+    
+    for i in range(wrong_idx[0], wrong_idx[len(wrong_idx)-1]+1, 1):
+        if transcript_array[i] != ideal_array[i]:
+            wrong_words.append(ideal_array[i])
+    
+    return wrong_words
+
+def get_pronun_pct(words, wrong_words_count):
+    return round(((wrong_words_count/words) * 100),1)
+
+def get_pronun_desc(pct):
     if (pct >= 30.0):
         return 'Needs Improvement'
     if (pct <= 3.0):
         return 'Perfect'
-    if (pct > 3.0 and pct <= 10.0):
+    if (pct > 3.0 and pct < 30.0):
         return 'Good'
