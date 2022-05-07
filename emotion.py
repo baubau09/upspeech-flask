@@ -80,7 +80,7 @@ def get_features(url, fileName):
     return result
 
 def emotion_result(audioURL, filename):
-    model = keras.models.load_model("speech_emotion.h5")
+    model = keras.models.load_model("ml/speech_emotion.h5")
     X = []
     audio_feature = get_features(audioURL, filename)
     for item in audio_feature:
@@ -95,7 +95,7 @@ def emotion_result(audioURL, filename):
 
     ## Encoder for output labels
     encoder = OneHotEncoder()
-    my_features = pd.read_csv("my_features.csv")
+    my_features = pd.read_csv("ml/my_features.csv")
     Y = my_features['labels'].values
     Y = encoder.fit_transform(np.array(Y).reshape(-1,1)).toarray()
 

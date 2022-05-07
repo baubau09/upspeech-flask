@@ -1,10 +1,10 @@
 from emotion import *
 
-model = keras.models.load_model("speech_emotion.h5")
+model = keras.models.load_model("ml/speech_emotion_new.h5")
 
 url = "https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/test%2Funtitled7.wav?alt=media&token=50ff4466-4ecb-48ce-b1da-c42e2aee9f41"
 X = []
-feature = get_features(url)
+feature = get_features(url, 'untitled7.wav')
 for item in feature:
     X.append(item)
 # print("features")
@@ -15,7 +15,7 @@ for item in feature:
 Features = pd.DataFrame(X)
 single = Features.drop(axis=0,labels=[1])
 encoder = OneHotEncoder()
-my_features = pd.read_csv("my_features.csv")
+my_features = pd.read_csv("ml/my_features.csv")
 Y = my_features['labels'].values
 Y = encoder.fit_transform(np.array(Y).reshape(-1,1)).toarray()
 

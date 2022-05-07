@@ -6,7 +6,8 @@ import threading
 from time import sleep
 from flask_cors import CORS, cross_origin
 from audio import *
-from filler import *
+#from filler import *
+from emotion import *
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -92,6 +93,7 @@ def evaluation():
         pronunCount = len(pronunWords)
         pronunPct = get_pronun_pct(wordCount, pronunCount)
         pronunDesc = get_pronun_desc(pronunPct)
+        emotion = emotion_result(audioURL, fileName)
 
         # Remove file after processing
         if os.path.isfile("filler_" + fileName):
@@ -117,11 +119,12 @@ def evaluation():
             "pronunErr": pronunCount,
             "pronunErrPct": pronunPct,
             "pronunErrDesc": pronunDesc,
-            "pronunWords": pronunWords
+            "pronunWords": pronunWords,
+            "emotion": emotion
         })
 
         # Update firebase parameters
-        speechRef.update({u'fillers': fillers ,u'fillersDesc': fillersDesc, u'fillersPct': fillersPct, u'pace': pace, u'paceDesc': paceDesc, u'wordCount': wordCount, u"pronunErr": pronunCount,u"pronunErrPct": pronunPct,u"pronunErrDesc": pronunDesc, u'pronunWords': pronunWords, u'updatedAt': datetime.datetime.now()})
+        speechRef.update({u'fillers': fillers ,u'fillersDesc': fillersDesc, u'fillersPct': fillersPct, u'pace': pace, u'paceDesc': paceDesc, u'wordCount': wordCount, u"pronunErr": pronunCount,u"pronunErrPct": pronunPct,u"pronunErrDesc": pronunDesc, u'pronunWords': pronunWords, u'emotion': emotion, u'updatedAt': datetime.datetime.now()})
 
         # print results to console
         # print(result)
@@ -137,6 +140,7 @@ def evaluation():
         print("Pronunciation count: " + str(pronunCount))
         print("Pronunciation %: " + str(pronunPct))
         print("Pronunciation Desc: " + pronunDesc)
+        print("Emotion: " + emotion)
         get_word_level_conf(alternative)
         for item in pronunWords:
             print(item)

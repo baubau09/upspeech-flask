@@ -15,4 +15,7 @@
 
 - Local run for testing
 `python run_audio.py`
-- Modify `run_audio.py` content to suit your need
+<code>
+`python run_emotion.py`
+</code>
+- Modify `run_audio.py` and `run_emotion.py` content to suit your need
