@@ -80,18 +80,24 @@ def get_features(url, fileName):
     return result
 
 def emotion_result(audioURL, filename):
+    ## Initialize model
     model = keras.models.load_model("ml/speech_emotion.h5")
+
+    ## Initialize X array
     X = []
+
+    ## Extract audio features
     audio_feature = get_features(audioURL, filename)
     for item in audio_feature:
         X.append(item)
 
+    ### Added features to dataframe
     features_with_augmentation = pd.DataFrame(X)
-    no_augmentation_feature = features_with_augmentation.drop(axis=0,labels=[1])
+    original_feature = features_with_augmentation.drop(axis=0,labels=[1])
 
     ## Normalize features
     scaler = StandardScaler()
-    X_input = scaler.fit_transform(no_augmentation_feature)
+    X_input = scaler.fit_transform(original_feature)
 
     ## Encoder for output labels
     encoder = OneHotEncoder()
@@ -100,7 +106,7 @@ def emotion_result(audioURL, filename):
     Y = encoder.fit_transform(np.array(Y).reshape(-1,1)).toarray()
 
     ## Prediction
-    prediction = model.predict(no_augmentation_feature)
+    prediction = model.predict(original_feature)
     predicted_label = encoder.inverse_transform(prediction)
 
     print("Emotion:")
