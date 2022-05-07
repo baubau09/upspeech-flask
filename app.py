@@ -121,11 +121,25 @@ def evaluation():
         })
 
         # Update firebase parameters
-        speechRef.update({u'fillers': fillers ,u'fillersDesc': fillersDesc, u'fillersPct': fillersPct, u'pace': pace, u'paceDesc': paceDesc, u'wordCount': wordCount, u"pronunErr": pronunCount,u"pronunErrPct": pronunPct,u"pronunErrDesc": pronunDesc})
+        speechRef.update({u'fillers': fillers ,u'fillersDesc': fillersDesc, u'fillersPct': fillersPct, u'pace': pace, u'paceDesc': paceDesc, u'wordCount': wordCount, u"pronunErr": pronunCount,u"pronunErrPct": pronunPct,u"pronunErrDesc": pronunDesc, u'pronunWords': pronunWords, u'updatedAt': datetime.datetime.now()})
 
         # print results to console
-        my_result = speechRef.get()
-        print(my_result.to_dict())
+        # print(result)
+        print("Pace: " + str(pace))
+        print("Pace: " + paceDesc)
+        print("Filled pauses: "+ str(fillers))
+        print("Filled pauses %: "+ str(fillersPct))
+        print("Filled pauses Desc: "+ fillersDesc)
+        print("Ideal transcript: " + script)
+        print("Ideal Words: " + str(count_words(script)))
+        print("Transcript: " + transcript)
+        print("Words: "+ str(wordCount))
+        print("Pronunciation count: " + str(pronunCount))
+        print("Pronunciation %: " + str(pronunPct))
+        print("Pronunciation Desc: " + pronunDesc)
+        get_word_level_conf(alternative)
+        for item in pronunWords:
+            print(item)
 
         # return
         return result, 200

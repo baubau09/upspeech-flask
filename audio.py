@@ -202,7 +202,7 @@ def get_pronun_words(ideal_transcript, transcript, alt):
     for i in range(wrong_idx[0], wrong_idx[len(wrong_idx)-1]+1, 1):
         if transcript_array[i] != ideal_array[i]:
             wrong_words.append(ideal_array[i])
-    
+
     return wrong_words
 
 def get_pronun_pct(words, wrong_words_count):

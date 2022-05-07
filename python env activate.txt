@@ -1,1 +1,0 @@
-source /Users/katietran/UpSpeech/upspeech-flask/venv/bin/activate

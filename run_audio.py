@@ -1,4 +1,5 @@
 from audio import *
+from emotion import *
 
 audioURL="https://firebasestorage.googleapis.com/v0/b/upspeech-48370.appspot.com/o/uploads%2FkmbSETfciMXU7ZKGkpXXE4fvnwK2%2FkmbSETfciMXU7ZKGkpXXE4fvnwK2_1650852629649.wav?alt=media&token=408c9528-5e5e-4acc-b738-47bf0b7f0510"
 uid = "kmbSETfciMXU7ZKGkpXXE4fvnwK2"
@@ -24,6 +25,7 @@ transcript_array = transcript.split()
 pronunWords = len(get_pronun_words(ideal_transcript,transcript,alt))
 pronunPct = get_pronun_pct(words, pronunWords)
 pronunDesc = get_pronun_desc(pronunPct)
+emotion = emotion_result(audioURL=audioURL,filename=fileName)
 get_pronun_desc
 # print("Number of words: " + str(words))
 print("Pace: " + str(pace))
@@ -32,12 +34,13 @@ print("Filled pauses: "+ str(fillers))
 print("Filled pauses %: "+ str(fillersPct))
 print("Filled pauses Desc: "+ fillersDesc)
 print("Ideal transcript: " + ideal_transcript)
-print("Words: " + str())
+print("Words: " + str(ideal_words))
 print("Transcript: " + transcript)
 print("Words: "+ str(words))
 print("Pronunciation count: " + str(pronunWords))
 print("Pronunciation %: " + str(pronunPct))
 print("Pronunciation Desc: " + pronunDesc)
+print("Emotion: " + emotion)
 get_word_level_conf(alt)
 
 # my_dict = {}
