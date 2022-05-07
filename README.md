@@ -14,10 +14,10 @@
 `python -m flask run`
 
 - Local run for testing
-`python run_audio.py`
 
 <code>
-`python run_emotion.py`
+python run_audio.py
+python run_emotion.py
 </code>
 
 - Modify `run_audio.py` and `run_emotion.py` content to suit your need
