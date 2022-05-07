@@ -7,11 +7,17 @@
 
 - Paste Google service account json credentials to a file name `upspeech-firebase-key.json`
 - Install the required dependencies
-`pip install -r requirements.txt`
+
+<code>
+pip install -r requirements.txt
+</code>
 
 ## Run
 - Run flask server
-`python -m flask run`
+
+<code>
+python -m flask run
+</code>
 
 - Local run for testing
 
