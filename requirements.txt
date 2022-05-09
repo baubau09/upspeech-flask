@@ -13,5 +13,5 @@ librosa>=0.9.1
 matplotlib>=3.5.1
 tensorflow>=2.8.0
 scikit-learn>=1.0.2
-flask-cors>=3.10
+flask-cors>=3.0.10
 soundfile>=0.10.3
