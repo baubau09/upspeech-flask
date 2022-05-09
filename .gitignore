@@ -1,3 +1,4 @@
 key.json
 venv
 upspeech-firebase-key.json
+.env
