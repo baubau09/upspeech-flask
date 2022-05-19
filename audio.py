@@ -9,6 +9,7 @@ import urllib.request
 from parselmouth.praat import run_file
 import parselmouth
 from google.oauth2 import service_account
+from string import punctuation
 
 gg_cred = service_account.Credentials.from_service_account_file("upspeech-firebase-key.json")
 
@@ -121,7 +122,7 @@ def run_praat_file(m, p):
     assert os.path.isfile(sourcerun), "Wrong path to praat script"
     assert os.path.isdir(path), "Wrong path to audio files"
     try:
-        objects= run_file(sourcerun, -20, 2, 0.3, "yes",sound,path, 80, 400, 0.01, capture_output=True)
+        objects= run_file(sourcerun, -20, 4, 0.6, "yes",sound,path, 80, 400, 0.01, capture_output=True)
         #print (objects[0]) # This will print the info from the sound object, and objects[0] is a parselmouth.Sound object
         z1=str( objects[1]) # This will print the info from the textgrid object, and objects[1] is a parselmouth.Data object with a TextGrid inside
         z2=z1.strip().split()
@@ -166,12 +167,14 @@ def get_fillers_pct(fillers, words):
     return round(((fillers/words) * 100),1)
 
 def get_fillers_desc(pct):
-    if (pct >= 25.0):
-        return 'Needs Improvement'
     if (pct <= 3.0):
         return 'Perfect'
     if (pct > 3.0 and pct < 25.0):
         return 'Good'
+    if (pct >= 25.0 and pct <= 65.0):
+        return 'Needs Improvement'
+    if (pct > 65.0):
+        return 'Bad'    
 
 def get_word_level_conf(alternative):
     words = alternative.words
@@ -179,8 +182,8 @@ def get_word_level_conf(alternative):
         print(item.word, item.confidence)
 
 def get_pronun_words(ideal_transcript, transcript, alt):
-    ideal_array = ideal_transcript.split()
-    transcript_array = transcript.split()
+    ideal_array = ideal_transcript.lower().split()
+    transcript_array = transcript.lower().split()
     my_dict = {}
     for index, item in enumerate(alt.words):
         if (item.confidence <= 0.81):
@@ -193,6 +196,7 @@ def get_pronun_words(ideal_transcript, transcript, alt):
     my_dict_keys = list(my_dict.keys())
     wrong_idx = []
     wrong_words = []
+    wrong_words_idx = []
     for item in my_dict_keys:
         wrong_idx.append(item)
 
@@ -200,18 +204,22 @@ def get_pronun_words(ideal_transcript, transcript, alt):
         return wrong_words
     
     for i in range(wrong_idx[0], wrong_idx[len(wrong_idx)-1]+1, 1):
-        if transcript_array[i] != ideal_array[i]:
+        if transcript_array[i] != ideal_array[i].strip(punctuation):
             wrong_words.append(ideal_array[i])
+            wrong_words_idx.append(i)
 
-    return wrong_words
+    return wrong_words, wrong_words_idx
 
 def get_pronun_pct(words, wrong_words_count):
     return round(((wrong_words_count/words) * 100),1)
 
 def get_pronun_desc(pct):
-    if (pct >= 30.0):
-        return 'Needs Improvement'
     if (pct <= 3.0):
         return 'Perfect'
     if (pct > 3.0 and pct < 30.0):
         return 'Good'
+    if (pct >= 30.0 and pct <= 70.0):
+        return 'Needs Improvement'
+    if (pct > 70.0):
+        return 'Bad'
+

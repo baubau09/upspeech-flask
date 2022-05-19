@@ -89,7 +89,7 @@ def evaluation():
         fillers = get_fillers(fileName, audioURL)
         fillersPct = get_fillers_pct(fillers,wordCount)
         fillersDesc = get_fillers_desc(fillersPct)
-        pronunWords = get_pronun_words(script, transcript,alternative)
+        pronunWords, pronunWordsIdx = get_pronun_words(script, transcript,alternative)
         pronunCount = len(pronunWords)
         pronunPct = get_pronun_pct(wordCount, pronunCount)
         pronunDesc = get_pronun_desc(pronunPct)
@@ -120,11 +120,12 @@ def evaluation():
             "pronunErrPct": pronunPct,
             "pronunErrDesc": pronunDesc,
             "pronunWords": pronunWords,
+            "pronunWordsIdx": pronunWordsIdx,
             "emotion": emotion
         })
 
         # Update firebase parameters
-        speechRef.update({u'fillers': fillers ,u'fillersDesc': fillersDesc, u'fillersPct': fillersPct, u'pace': pace, u'paceDesc': paceDesc, u'wordCount': wordCount, u"pronunErr": pronunCount,u"pronunErrPct": pronunPct,u"pronunErrDesc": pronunDesc, u'pronunWords': pronunWords, u'emotion': emotion, u'updatedAt': datetime.datetime.now()})
+        speechRef.update({u'fillers': fillers ,u'fillersDesc': fillersDesc, u'fillersPct': fillersPct, u'pace': pace, u'paceDesc': paceDesc, u'wordCount': wordCount, u"pronunErr": pronunCount,u"pronunErrPct": pronunPct,u"pronunErrDesc": pronunDesc, u'pronunWords': pronunWords, u'pronunWordsIdx': pronunWordsIdx, u'emotion': emotion, u'updatedAt': datetime.datetime.now()})
 
         # print results to console
         # print(result)
