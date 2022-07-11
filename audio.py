@@ -148,7 +148,7 @@ def get_fillers(filename, url):
         file = "filler_" + filename
         urllib.request.urlretrieve(url, file)
 
-    p = "/Users/katietran/UpSpeech/upspeech-flask"
+    p = "/home/lbtuan2231/upsp"
     z2 = run_praat_file(filename, p)
     z3=int(z2[1])
     z4=float(z2[3]) 

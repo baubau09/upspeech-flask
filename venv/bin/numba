@@ -1,4 +1,4 @@
-#!/Users/katietran/UpSpeech/upspeech-flask/venv/bin/python3.9
+#!/home/lbtuan2231/upsp/venv/bin/python
 # -*- coding: UTF-8 -*-
 from __future__ import print_function, division, absolute_import
 

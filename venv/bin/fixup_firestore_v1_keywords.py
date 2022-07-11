@@ -1,4 +1,4 @@
-#!/Users/katietran/UpSpeech/upspeech-flask/venv/bin/python3.9
+#!/home/lbtuan2231/upsp/venv/bin/python
 # -*- coding: utf-8 -*-
 # Copyright 2022 Google LLC
 #
