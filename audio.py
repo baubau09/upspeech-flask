@@ -61,14 +61,13 @@ def transcribe_gcs(file_url, filename, uid):
         encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
         sample_rate_hertz=44100,
         language_code="en-US",
-        enable_word_confidence=True,
-        audio_channel_count=1
+        enable_word_confidence=True
     )
 
     operation = client.long_running_recognize(config=config, audio=audio)
 
     print("Waiting for operation to complete...")
-    response = operation.result(timeout=3000)
+    response = operation.result(timeout=5000)
 
     k = ""
     chunks = 0
