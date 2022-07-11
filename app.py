@@ -70,6 +70,7 @@ def evaluation():
         pace = 0
         paceDesc = ''
         transcript = ''
+        
 
         # Audio validation value
         val_audio = validate_audio(audioURL, filename=fileName)
@@ -81,19 +82,32 @@ def evaluation():
             transcript, alternative = transcribe_gcs(file_url=audioURL, filename=fileName, uid=uid)
         if val_audio == fileName:
             transcript, alternative = transcribe_gcs(file_url="", filename=fileName, uid=uid)
-        
+        print("Transcript: " + transcript)
+        print("Ideal transcript: " + script)
 
         wordCount = count_words(transcript)
+        print("Words: "+ str(wordCount))
+
         pace = get_pace(transcript, audioURL)
+        print("Pace: " + str(pace))
+
         paceDesc = get_pace_desc(pace)
+        print("Pace: " + paceDesc)
+
         fillers = get_fillers(fileName, audioURL)
+        print("Filled pauses: "+ str(fillers))
+
         fillersPct = get_fillers_pct(fillers,wordCount)
+        print("Filled pauses %: "+ str(fillersPct))
+
         fillersDesc = get_fillers_desc(fillersPct)
-        pronunWords, pronunWordsIdx = get_pronun_words(script, transcript,alternative)
-        pronunCount = len(pronunWords)
-        pronunPct = get_pronun_pct(wordCount, pronunCount)
-        pronunDesc = get_pronun_desc(pronunPct)
+        print("Filled pauses Desc: "+ fillersDesc)
+
+        print("Ideal Words: " + str(count_words(script)))
+
         emotion = emotion_result(audioURL, fileName)
+        print("Emotion: " + emotion)
+        
 
         # Remove file after processing
         if os.path.isfile("filler_" + fileName):
@@ -102,6 +116,30 @@ def evaluation():
         os.remove(fileName)
         os.remove(textgrid_name)
 
+        
+        # initialize variables to avoid API crash because of errors in get_pronun_words #
+        pronunWords = ''
+        pronunWordsIdx = []
+        pronunCount = 0
+        pronunPct = 0
+        pronunDesc = ''
+        # initialize variables to avoid API crash #
+
+        # TODO: Fix bugs in get_pronun_words
+        #### errors in get_pronun_words. Must fix
+        pronunWords, pronunWordsIdx = get_pronun_words(script, transcript, alternative)
+        pronunCount = len(pronunWords)
+        print("Pronunciation count: " + str(pronunCount))
+
+        pronunPct = get_pronun_pct(wordCount, pronunCount)
+        print("Pronunciation %: " + str(pronunPct))
+        
+        pronunDesc = get_pronun_desc(pronunPct)
+        print("Pronunciation Desc: " + pronunDesc)
+        
+        # get_word_level_conf(alternative)
+        # for item in pronunWords:
+        #     print(item)
         
         result = jsonify({
             "uid": uid,
@@ -124,27 +162,14 @@ def evaluation():
             "emotion": emotion
         })
 
+        # print results to console
+        print(result)
+
         # Update firebase parameters
         speechRef.update({u'fillers': fillers ,u'fillersDesc': fillersDesc, u'fillersPct': fillersPct, u'pace': pace, u'paceDesc': paceDesc, u'wordCount': wordCount, u"pronunErr": pronunCount,u"pronunErrPct": pronunPct,u"pronunErrDesc": pronunDesc, u'pronunWords': pronunWords, u'pronunWordsIdx': pronunWordsIdx, u'emotion': emotion, u'updatedAt': datetime.datetime.now()})
 
-        # print results to console
-        # print(result)
-        print("Pace: " + str(pace))
-        print("Pace: " + paceDesc)
-        print("Filled pauses: "+ str(fillers))
-        print("Filled pauses %: "+ str(fillersPct))
-        print("Filled pauses Desc: "+ fillersDesc)
-        print("Ideal transcript: " + script)
-        print("Ideal Words: " + str(count_words(script)))
-        print("Transcript: " + transcript)
-        print("Words: "+ str(wordCount))
-        print("Pronunciation count: " + str(pronunCount))
-        print("Pronunciation %: " + str(pronunPct))
-        print("Pronunciation Desc: " + pronunDesc)
-        print("Emotion: " + emotion)
-        get_word_level_conf(alternative)
-        for item in pronunWords:
-            print(item)
+        
+        
 
         # return
         return result, 200
